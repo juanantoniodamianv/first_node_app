@@ -1,0 +1,15 @@
+{
+  "name": "project_example",
+  "version": "1.0.0",
+  "description": "Only is a example",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vargas Juan Antonio Damian",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "jade": "^1.11.0"
+  }
+}
