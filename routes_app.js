@@ -2,10 +2,18 @@ var express = require("express");
 var Imagen = require("./models/imagenes");
 var image_finder_middleware = require("./middlewares/find_image");
 var router = express.Router();
+//var fs = require("fs");
+var mv = require("mv");
+
 /*      www.app.com/app./      */
 router.get("/",function(req,res){
-	/* Buscar el usuario */
-	res.render("app/home")
+	Imagen.find({})
+		.populate("creator")
+		.exec(function(err,imagenes){
+			if(err) console.log(err);
+			res.render("app/home",{imagenes: imagenes});
+		})
+	//res.render("app/home")
 });
 
 
@@ -27,7 +35,7 @@ router.route("/imagenes/:id")
 			res.render("app/imagenes/show");
 	})
 	.put(function(req,res){
-			res.locals.imagen.title = req.body.title;
+			res.locals.imagen.title = req.fields.title;
 			res.locals.imagen.save(function(err){
 				if(!err){
 					res.render("app/imagenes/show");
@@ -55,15 +63,23 @@ router.route("/imagenes")
 		});
 	})
 	.post(function(req,res){
-		console.log(res.locals.user._id);
+		var extension = req.files.archivo.name.split(".").pop(); //devuelve la extension
+		console.log(req.files.archivo);
+		//console.log(res.locals.user._id);
 		var data = {
-			title: req.body.title,
-			creator: res.locals.user._id
+			title: req.fields.title,
+			creator: res.locals.user._id,
+			extension: extension
 		}
 		var imagen = new Imagen(data);
 		imagen.save(function(err){
 			if(!err){
-				res.redirect("/app/imagenes/"+imagen._id)
+				//fs.rename(req.files.archivo.path, "public/images/"+imagen._id+"."+extension);
+				mv(req.files.archivo.path, "public/images/"+imagen._id+"."+extension, function(err){
+					if(err) throw err;
+					console.log("Fichero copiado correctamente.");
+				});
+				res.redirect("/app/imagenes/"+imagen._id);
 			}else{
 				console.log(imagen);
 				res.render(err);

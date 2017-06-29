@@ -5,6 +5,9 @@ var User = require("./models/user").User;
 var cookieSession = require("cookie-session");
 var router_app = require("./routes_app");
 var session_middleware = require("./middlewares/session");
+var formidable = require('express-formidable');
+var mv = require("mv");
+
 var methodOverride = require("method-override"); //middleware sirve para implementar metodos (http) que no implementa el navegador, como PUT y DELETE
 
 
@@ -42,6 +45,8 @@ app.use(cookieSession({
 	name: "session",
 	keys: ["llave-1","llave-2"]
 }));
+
+app.use(formidable({ keepExtensions: true }));
 
 app.set("view engine", "jade");
 
